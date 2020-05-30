@@ -1,0 +1,213 @@
+\documentclass{article}
+
+\usepackage{amsmath, amssymb}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\usepackage{commath}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs} % for professional tables
+\usepackage{hyperref}
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+\usepackage[accepted]{icml2020}
+\icmltitlerunning{Zero-Shot Learning for Image Classification}
+
+\begin{document}
+
+\twocolumn[
+	\icmltitle{Zero-Shot Learning for Image Classification}
+
+	\begin{icmlauthorlist}
+	\icmlauthor{Deepesh V. Hada}{affil1}
+	\icmlauthor{Jayant Priyadarshi}{affil2}
+	\icmlauthor{Kavita Wagh}{affil2}
+	\end{icmlauthorlist}
+
+	\icmlaffiliation{affil1}{Department of CSA, Indian Institute of Science, Bangalore, India}
+	\icmlaffiliation{affil2}{Department of EECS, Indian Institute of Science, Bangalore, India}
+
+	\icmlcorrespondingauthor{Deepesh V. Hada}{deepeshhada@iisc.ac.in}
+	\icmlcorrespondingauthor{Jayant Priyadarshi}{jayantp@iisc.ac.in}
+	\icmlcorrespondingauthor{Kavita Wagh}{kavitawagh@iisc.ac.in}
+
+	\vskip 0.3in
+]
+\printAffiliationsAndNotice{}
+
+
+\begin{abstract}
+We consider the problem of zero-shot recognition: learning a visual classifier for a category with zero training examples, 
+just using some embedding to represent the category and its relationship to the other categories, for which visual data are provided. 
+The key to dealing with the unfamiliar or novel category is to transfer knowledge obtained from familiar classes to describe the unfamiliar class. 
+Zero-shot learning is a promising learning method, in which the classes covered by the training instances and the classes we aim to classify are disjoint. 
+It refers to a specific use case of machine learning (and therefore, deep learning) where we want the model to classify data based on very few or even no labeled examples, 
+which means classifying data on the fly.
+\end{abstract}
+
+
+\section{Introduction and Literature Survey}
+In recent years, deep learning has achieved state-of-the-art performance across a wide range of computer vision tasks such as image classification. 
+However, these deep learning methods rely on enormous amount of labeled data which is scarce for dynamically emerging objects. 
+Practically, it is unrealistic to annotate everything around us, thus, making the conventional object classification methods infeasible. 
+
+We focus on the extreme case when there is no labeled data, \textit{i.e.}, Zero-shot learning (ZSL), 
+where the task is to recognize the novel categories' instances that have no labeled data available for training. 
+ZSL assumes that the semantic label embeddings of both the seen and unseen classes are known apriori. 
+ZSL, thus, learns to identify unseen classes by leveraging the semantic relationship between seen and unseen classes. 
+It is important to note that the training and test classes are \textbf{disjoint} in ZSL.
+
+%% citation from SABR
+ZSL algorithms generally project the seen and unseen class instances onto a latent space that is expected to be robust for learning unseen class labels. 
+This latent space is shared by both seen and unseen categories and is aimed to be a mapping between images and their class embeddings. 
+The learning is carried out with the help of semantic descriptors associated with each class. 
+These approaches, thus, tend to learn a latent space that is aligned towards the semantic class embedding \citep{sabr10, sabr12, sabr14, sabr17, sabr19, sabr23}, on which the input data is transformed. 
+This transformation of data onto the latent space, however, makes these ZSL approaches suffer from the \textbf{hubness problem}: 
+the transformed data vectors become \textit{hubs} for the nearby semantic class embeddings, leading to performance deterioration \citep{sabr18, sabr16, sabr9}. 
+To mitigate the hubness problem, 
+other approaches \citep{sabr29, sabr5, sabr31, sabr18, akanksha} learn a latent space for recognizing the seen class labels by aligning the semantic class embeddings towards this latent space. 
+
+%% citations from CADA-VAE
+There exists an orthogonal approach, wherein artificial images \citep{cada23} are generated to augment the training data. 
+These synthetic images are usually generated from conditional generative models like conditional WGANs \citep{sabr25}. 
+\citet{sabr25} improved image classification considerably, but having GAN-based loss functions, suffer from instability in training. 
+Recent developments have then been made along this approach using Conditional VAEs (CVAEs). 
+\citet{edgar} proposed an aligned VAE model, CADA-VAE, which 
+learns a latent embedding of image features and class embedding via aligned VAEs optimized with cross-alignment and distribution-alignment objectives, 
+and subsequently trains a classifier on sampled latent features of seen and unseen classes. 
+
+%% citations from KG-GCN
+There has been another very different approach for zero-shot recognition using the semantic class embeddings and a \textbf{Knowledge Graph}  (KG)
+that encodes the relationship of the novel category to some familiar categories. 
+The ﬁrst paradigm is to use implicit knowledge representations, \textit{i.e.}, semantic embeddings, and hence, this is the same as the first set of approaches.
+The alternative paradigm for zero-shot learning in these approaches is to use explicit knowledge bases or KGs, 
+wherein one explicitly represents the knowledge as rules or relationships between objects. 
+These relationships can then be used to learn zero-shot classifiers for new categories \citep{gcn33}. 
+There has been a combination of the two such that the model distills both the implicit knowledge representations (i.e. semantic embedding) and 
+explicit relationships (i.e. knowledge graph) for learning \textbf{Graph Convolutional Network} (GCN) based visual classiﬁers of novel classes \citep{abhinav}.
+
+Also, irrespective of the latent space for transforming the data, there is an inherent \textbf{bias} in the model towards seen classes, 
+which is referred to as the bias problem in literature. 
+Due to this bias, the models generally perform poorly on unseen classes, and the predictions are primarily made in favour of the seen classes.
+
+After considering these various approaches of GZSL for the task of image classification, 
+we have implemented a model which we call \textbf{Alignment GAN using Spectral Normalization} (AGSN) \textit{Generalized Inductive} ZSL, taking inspiration from \citep{akanksha}. Our model gets rid of the hubness problem and the bias to a large extent.
+We have also applied Spectral Normalization \citep{spectralnorm} in our model. In our knowledge, Spectral Normalization has not been used in the task of ZSL yet. We apply Spectral Normalization over the parameters of our Generator and Critic, which helps contain the Lipschitz constant of the GAN model thus enhancing smooth gradient flow. While \citep{akanksha} learns a $1024$ dimensional space of discriminative features, we directly learn discriminative features in the space of the visual input from the ResNet features. Moreover, we apply Batch Normalization over the generator and the critic, which increased the performance of our model.
+
+
+\section{Related Work}
+\label{related work}
+We discuss the state-of-the-art performing models in this section. 
+The datasets which are predominantly used for training and evaluating ZSL models are \textbf{CUB} \citep{cub}, \textbf{SUN} \citep{sun}, \textbf{AwA} \citep{awa}, \textbf{AwA2} \citep{awa2}  and \textbf{aPY} \citep{apy}.
+
+% cite from abhinav
+\citet{abhinav} take a different approach by constructing a new knowledge graph based on the Never-Ending Language Learning (NELL) for embeddings \citep{gcn3} and Never-Ending Image Learning (NEIL) for images \citep{gcn8} datasets and WordNet for word embeddings and ImageNet for images.
+
+Since they evaluate their performances only on these datasets, their work cannot be compared with the other other models which evaluate on the aforementioned datasets.
+
+A significant progress in ZSL was achieved by \citep{edgar}. 
+Their approach takes feature generation one step further through a model (CADA-VAE)
+where a shared latent space of image features and class embeddings is learned through \textit{modality-specific} aligned variational autoencoders, 
+on which a SoftMax classifier is trained. CADA-VAE has achieved state-of-the-art results on \textit{AwA} and \textit{AwA2}.
+
+\citet{changhu} proposed a model, GDAN, consisting of three components that perform GZSL, where 
+the \textit{Generator} represents the semantic $\rightarrow$ visual methods; 
+the \textit{Regressor} represents the visual $\rightarrow$ semantic methods; and 
+the \textit{Discriminator} represents metric learning. The \textit{Regressor} is trained simultaneously with the CVAE using the cyclic consistency loss.
+GDAN has pulled off state-of-the-art results on the \textbf{SUN} \citep{sun} dataset. 
+
+
+
+\section{Task}
+\label{task}
+On the basis of data available during the training phase, ZSL can also be divided into two categories: \textbf{Inductive} and \textbf{Transductive} ZSL. 
+In inductive ZSL \citep{sabr10, sabr14, sabr12, sabr17, sabr23, sabr29, sabr3, sabr25}, we are only provided with the labeled seen class instances and the semantic embedding of unseen class labels during training. 
+In transductive ZSL \citep{sabr21, sabr28}, in addition to the labeled seen class data and the semantic embedding of all labels, 
+we are also provided with the \textbf{unlabeled instances} of unseen classes data during the training time.
+
+Here, we assume that we do NOT have any unlabeled inputs corresponding to the unseen classes, and hence, we'll be dealing with \textbf{Inductive} ZSL.
+
+Further, we also consider a more practical and realistic version of ZSL, the \textbf{Generalized Zero-shot learning} (GZSL) problem. 
+In the \textbf{classical} ZSL, data emerges only from unseen classes at test time, 
+\textit{i.e.}, the performance of the algorithmic approach is solely judged on its classification accuracy on the novel unseen classes. 
+In contrast, GZSL aims at maximizing performance on both seen and unseen classes, where the data during testing may come from both seen and unseen classes.
+
+The task of GZSL is defined as follows:
+\begin{equation}
+D_s = \{(x^s, y^s, c(y^s))~|~x^s \in X,~ y^s \in Y^s, ~c(y^s) \in C\}
+\end{equation}
+is a set of seen training examples, consisting of image-features $x^s$, extracted by a CNN (ResNet-101), 
+class labels $y^s$ available during training and semantic class embeddings $c(y)$. 
+The class-embeddings are hand-annotated attribute vectors. Note that unlike the Transductive ZSL, no auxiliary training set is provided.
+
+With conventional ZSL, the aim of the classifier during test time is to map,
+\begin{equation}
+X \to Y^u
+\end{equation}
+We also consider GZSL where the aim is to learn a classifier that maps: 
+\begin{equation}
+X \to Y^u \cup Y^s
+\end{equation}
+
+
+\section{Model}
+\label{model}
+We first use a pre-trained deep network \textbf{Resnet-101} to extract features from the seen class images. For notational convenience, we'll denote $x_i^s$ as $2048$-dimensional feature vectors extracted from the pre-trained Resnet model.
+The model consists of four components with an adversarial setup. We now define these components and their tasks.
+
+\begin{enumerate}
+	\item \textbf{Classifier ($f_c$)}: The classifier $f_c$, as the name suggests, learns to discriminate between the seen classes. 
+	A training instance, $x_i^s$ is transformed by $f_c$ to a one-hot encoding of its class label and then trained by minimizing the categorical cross-entropy loss:
+	\begin{equation}
+		L_C = - \frac{1}{N_s} \sum_{i=1}^{N_s}{L(y_i^s, f_c(x_i^s))}
+	\end{equation}
+	where $L$ is cross entropy loss between true and predicted labels of seen class instance $x_s$.
+	
+	\item \textbf{Regressor ($f_r$)}: The regressor $f_r$ preserves the semantic relationships among the seen class labels.
+	It tries to ensure that the regressor output of a seen instance, \textit{i.e.}, $f_r(x_i^s)$, is closely related to the corresponding semantic embedding, $c(y_i^s)$. We use a similarity based cross-entropy loss between the predicted label embeddings of the regressor and the true semantic label embedding:
+	\begin{equation}
+		L_S = - \sum_{i=1}^{N_s} log \frac{exp(<f_r(x_i^s), c(y_i^s)>)}{\sum_{y^s \in S} exp(<f_r(x_i^s), c(y^s)>)}
+	\end{equation}
+	Here, $<f_r(x_i^s), c(y_i^s)>$ refers to the \textit{similarity} between predicted label embedding, $f_r(x_i^s)$. The similarity function that we have used is a simple normalized cosine similarity. One could use some other similarity functions like the \textit{Jaccard} similarity as well.
+
+	\item \textbf{Adversarial Pair:} 
+	In inductive GZSL setup, we do not have training instances of the unseen classes which could pose a problem in our objective. We follow the approach of \citet{sabr25}, wherein we construct a \textit{conditional generator} network that can generate artificial instances from the unseen embeddings. 
+
+	This conditional generator takes as input a random noise vector $z$ and a class label embedding $c(y_s)$,  and outputs an instance $\tilde{x}^s$ in the $2048$-dimensional input space. 
+
+	We train the conditional generator using the \textit{Wasserstein} adversarial loss defined by,
+	
+	\begin{equation*}
+		L_G^s = \E[D^s(x^s, c(y^s))] - \E[D^s(\tilde{x}^s, c(y^s))]
+	\end{equation*}
+	
+	where, $D^s$ is the seen class conditional discriminator whose input is the seen class label embedding, $c(y^s)$, and one of the input space instance, ${x}^s$ or the fake instance,   $G(c(y^s))$. Thus, the objective of the generator-discriminator pair is to,
+	\begin{equation}
+		\min_{G^s} \max_{D^s}	L_G^s
+	\end{equation}
+\end{enumerate}
+
+Further, we want to encourage the generator network to synthesize feature vectors that are discriminative between seen classes and encode the semantic similarity between the label embeddings, which are precisely what the Classfier and Regressor do, respectively. Thus, the overall loss function for the generator-discriminator network is,
+\begin{equation}
+	\min_{G^s} \max_{D^s}	L_G^s + \beta (L_C + \gamma L_S)
+\end{equation}
+
+The generator can now be used to synthesize $2048$-dimensional feature vectors for the unseen classes. However, the generator can be overly biased towards the seen classes due to the training set that is presented to it, which is a stumbling block. This bias is mitigated using the principle of early stopping during training the generator. 
+
+\section{Experiments and Results}
+\label{experiments}
+Our Generator is a a two layered Fully Connected network with LeakyReLU activation. The size of the hidden layer is $2048$ dimensional. Batch Norm and Spectral Norm is applied after the first connected layer. ReLU activation is used in the last layer. The Critic is also a two layered Fully Connected network with LeakyReLU activation, Batch Norm and Spectral Norm after the first layer. The hidden layer size is $4096$ for the critic.
+The classifier and the regressor are simple 1 layered connected network with appropriate dimensionalities. All the model parameters are pre-initialized with a Gaussian Distribution with zero mean and standard deviation of 0.02\\
+\\
+After training the conditional GAN, we generate $100$ artificial, visual features of each unseen class, expecting these artificial features to be semantically aligned to there embeddings and having the power of class discrimination. We append the dataset with these artificial features and hence the dataet now contains features from both seen as well as unseen classes.We finally train a Softmax Classifier over the appended dataset over all the classes. The final classifier is also a two layered fully connected network with LeakyReLU activation having a $2048$ dimensional hidden layer. \\
+\\
+Following WGAN-GP, we train the Discriminator five times per Generator update as the Discriminator is usually slow to learn. We use Adam Optimizer with a learning rate of 0.001 and betas as (0.5, 0.999) across the Generator and the Discriminator. We have also used Weight Clipping for the parameters of the Discriminator as suggested by WGAN-GP.
+\medskip
+
+\section*{Software and Data}
+The repository can be found \href{https://github.com/deepeshhada/SABR}{here} and has been implemented in Python 3.7.4 using PyTorch.
+
+\medskip
+
+\bibliography{final_report}
+\bibliographystyle{icml2020}
+\end{document}
