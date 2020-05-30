@@ -1,4 +1,4 @@
-\begin{thebibliography}{29}
+\begin{thebibliography}{31}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -8,13 +8,11 @@
 \bibitem[Annadani \& Biswas(2018)Annadani and Biswas]{sabr3}
 Annadani, Y. and Biswas, S.
 \newblock Preserving semantic relations for zero-shot learning, 2018.
-\newblock URL \url{http://arxiv.org/abs/1803.03049}.
 
 \bibitem[Ba et~al.(2015)Ba, Swersky, Fidler, and Salakhutdinov]{sabr5}
 Ba, J., Swersky, K., Fidler, S., and Salakhutdinov, R.
 \newblock Predicting deep zero-shot convolutional neural networks using textual
   descriptions, 2015.
-\newblock URL \url{http://arxiv.org/abs/1506.00511}.
 
 \bibitem[Carlson et~al.(2010)Carlson, Betteridge, Kisiel, Settles, Hruschka,
   and Mitchell]{gcn3}
@@ -37,16 +35,19 @@ Frome, A., Corrado, G.~S., Shlens, J., Bengio, S., Dean, J., Ranzato, M., and
   Mikolov, T.
 \newblock Devise: A deep visual-semantic embedding model, 2013.
 
+\bibitem[Gulrajani et~al.(2017)Gulrajani, Ahmed, Arjovsky, Dumoulin, and
+  Courville]{wgangp}
+Gulrajani, I., Ahmed, F., Arjovsky, M., Dumoulin, V., and Courville, A.~C.
+\newblock Improved training of wasserstein gans, 2017.
+
 \bibitem[Huang et~al.(2018)Huang, Wang, Yu, and Wang]{changhu}
 Huang, H., Wang, C., Yu, P.~S., and Wang, C.
 \newblock Generative dual adversarial network for generalized zero-shot
   learning, 2018.
-\newblock URL \url{http://arxiv.org/abs/1811.04857}.
 
 \bibitem[Kodirov et~al.(2017)Kodirov, Xiang, and Gong]{sabr12}
 Kodirov, E., Xiang, T., and Gong, S.
 \newblock Semantic autoencoder for zero-shot learning, 2017.
-\newblock URL \url{http://arxiv.org/abs/1704.08345}.
 
 \bibitem[Lampert et~al.(2009)Lampert, Nickisch, Harmeling, and Weidmann]{awa}
 Lampert, C.~H., Nickisch, H., Harmeling, S., and Weidmann, J.
@@ -68,12 +69,10 @@ Lampert, C.~H., Pucher, D., and Dostal, J.
 \bibitem[Miyato et~al.(2018)Miyato, Kataoka, Koyama, and Yoshida]{spectralnorm}
 Miyato, T., Kataoka, T., Koyama, M., and Yoshida, Y.
 \newblock Spectral normalization for generative adversarial networks, 2018.
-\newblock URL \url{http://arxiv.org/abs/1802.05957}.
 
 \bibitem[Paul et~al.(2019)Paul, Krishnan, and Munjal]{akanksha}
 Paul, A., Krishnan, N.~C., and Munjal, P.
 \newblock Semantically aligned bias reducing zero shot learning, 2019.
-\newblock URL \url{http://arxiv.org/abs/1904.07659}.
 
 \bibitem[Radovanovi\'{c} et~al.(2010)Radovanovi\'{c}, Nanopoulos, and
   Ivanovi\'{c}]{sabr16}
@@ -86,7 +85,6 @@ Radovanovi\'{c}, M., Nanopoulos, A., and Ivanovi\'{c}, M.
 Reed, S.~E., Akata, Z., Schiele, B., and Lee, H.
 \newblock Learning deep representations of fine-grained visual descriptions,
   2016.
-\newblock URL \url{http://arxiv.org/abs/1605.05395}.
 
 \bibitem[Romera-Paredes \& Torr(2015)Romera-Paredes and Torr]{sabr17}
 Romera-Paredes, B. and Torr, P. H.~S.
@@ -102,24 +100,19 @@ Romera-Paredes, B. and Torr, P. H.~S.
   Matsumoto]{sabr18}
 Shigeto, Y., Suzuki, I., Hara, K., Shimbo, M., and Matsumoto, Y.
 \newblock Ridge regression, hubness, and zero-shot learning, 2015.
-\newblock URL \url{http://arxiv.org/abs/1507.00825}.
 
 \bibitem[Socher et~al.(2013)Socher, Ganjoo, Manning, and Ng]{sabr19}
 Socher, R., Ganjoo, M., Manning, C.~D., and Ng, A.
 \newblock Zero-shot learning through cross-modal transfer, 2013.
-\newblock URL
-  \url{http://papers.nips.cc/paper/5027-zero-shot-learning-through-cross-modal-transfer.pdf}.
 
 \bibitem[Verma \& Rai(2017)Verma and Rai]{sabr21}
 Verma, V.~K. and Rai, P.
 \newblock A simple exponential family framework for zero-shot learning, 2017.
-\newblock URL \url{http://arxiv.org/abs/1707.08040}.
 
 \bibitem[Wang et~al.(2018)Wang, Ye, and Gupta]{abhinav}
 Wang, X., Ye, Y., and Gupta, A.
 \newblock Zero-shot recognition via semantic embeddings and knowledge graphs,
   2018.
-\newblock URL \url{http://arxiv.org/abs/1803.08035}.
 
 \bibitem[Welinder et~al.(2010)Welinder, Branson, Mita, Wah, Schroff, Belongie,
   and Perona]{cub}
@@ -131,20 +124,24 @@ Welinder, P., Branson, S., Mita, T., Wah, C., Schroff, F., Belongie, S., and
   Schiele]{sabr23}
 Xian, Y., Akata, Z., Sharma, G., Nguyen, Q.~N., Hein, M., and Schiele, B.
 \newblock Latent embeddings for zero-shot classification, 2016.
-\newblock URL \url{http://arxiv.org/abs/1603.08895}.
 
 \bibitem[Xian et~al.(2017{\natexlab{a}})Xian, Lorenz, Schiele, and
   Akata]{sabr25}
 Xian, Y., Lorenz, T., Schiele, B., and Akata, Z.
 \newblock Feature generating networks for zero-shot learning,
   2017{\natexlab{a}}.
-\newblock URL \url{http://arxiv.org/abs/1712.00981}.
 
 \bibitem[Xian et~al.(2017{\natexlab{b}})Xian, Schiele, and Akata]{apy}
 Xian, Y., Schiele, B., and Akata, Z.
 \newblock Zero-shot learning - the good, the bad and the ugly,
   2017{\natexlab{b}}.
-\newblock URL \url{http://arxiv.org/abs/1703.04394}.
+
+\bibitem[{Xiao} et~al.(2010){Xiao}, {Hays}, {Ehinger}, {Oliva}, and
+  {Torralba}]{sun}
+{Xiao}, J., {Hays}, J., {Ehinger}, K.~A., {Oliva}, A., and {Torralba}, A.
+\newblock Sun database: Large-scale scene recognition from abbey to zoo, June
+  2010.
+\newblock ISSN 1063-6919.
 
 \bibitem[{Ye} \& {Guo}(2017){Ye} and {Guo}]{sabr28}
 {Ye}, M. and {Guo}, Y.
@@ -154,12 +151,10 @@ Xian, Y., Schiele, B., and Akata, Z.
 \bibitem[Zhang et~al.(2016)Zhang, Xiang, and Gong]{sabr29}
 Zhang, L., Xiang, T., and Gong, S.
 \newblock Learning a deep embedding model for zero-shot learning, 2016.
-\newblock URL \url{http://arxiv.org/abs/1611.05088}.
 
 \bibitem[Zhang \& Saligrama(2015)Zhang and Saligrama]{sabr31}
 Zhang, Z. and Saligrama, V.
 \newblock Classifying unseen instances by learning class-independent similarity
   functions, 2015.
-\newblock URL \url{http://arxiv.org/abs/1511.04512}.
 
 \end{thebibliography}

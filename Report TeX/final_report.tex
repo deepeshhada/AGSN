@@ -2,6 +2,7 @@
 
 \usepackage{amsmath, amssymb}
 \DeclareMathOperator{\E}{\mathbb{E}}
+\usepackage{commath}
 \usepackage{microtype}
 \usepackage{graphicx}
 \usepackage{subfigure}
@@ -114,7 +115,7 @@ on which a SoftMax classifier is trained. CADA-VAE has achieved state-of-the-art
 the \textit{Generator} represents the semantic $\rightarrow$ visual methods; 
 the \textit{Regressor} represents the visual $\rightarrow$ semantic methods; and 
 the \textit{Discriminator} represents metric learning. The \textit{Regressor} is trained simultaneously with the CVAE using the cyclic consistency loss.
-GDAN has pulled off state-of-the-art results on the \textit{SUN} dataset. 
+GDAN has pulled off state-of-the-art results on the \textbf{SUN} \citep{sun} dataset. 
 
 
 \section{Task}
@@ -133,7 +134,7 @@ In contrast, GZSL aims at maximizing performance on both seen and unseen classes
 
 The task of GZSL is defined as follows:
 \begin{equation}
-S = \{(x, y, c(y))~|~x \in X,~ y \in Y^s, ~c(y) \in C\}
+D_s = \{(x, y, c(y))~|~x \in X,~ y \in Y^s, ~c(y) \in C\}
 \end{equation}
 is a set of training examples, consisting of image-features $x$, extracted by a CNN (ResNet-101), 
 class labels $y$ available during training and semantic class embeddings $c(y)$. 
@@ -151,7 +152,49 @@ X \to Y^u \cup Y^s
 
 \section{Model}
 \label{model}
-TODO
+We first use a pre-trained deep network \textbf{Resnet-101} to extract features from the seen and unseen class images. For notational convenience, we'll denote $x_i^s$ and $x_i^u$ as $2048$-dimensional feature vectors extracted from the pre-trained Resnet model.
+The model consists of four components with an adversarial setup. We'll define these components and their responsibilities now.
+
+\begin{enumerate}
+	\item \textbf{Classifier ($f_c$)}: The classifier $f_c$, as the name suggests, learns to discriminate between the seen classes. 
+	A training instance, $x_i^s$ is transformed by $f_c$ to a one-hot encoding of its class label and then trained by minimizing the categorical cross-entropy loss:
+	\begin{equation}
+		L_C = - \frac{1}{N_s} \sum_{i=1}^{N_s}{L(y_i^s, f_c(x_i^s))}
+	\end{equation}
+	where $L$ is cross entropy loss between true and predicted labels of seen class instance $x_s$.
+	
+	\item \textbf{Regressor ($f_r$)}: The regressor $f_r$ preserves the semantic relationships among the seen class labels.
+	It tries to ensure that the regressor output on the \textit{embedding} of a seen instance, \textit{i.e.}, $f_r(x_i^s)$, is closely related to the corresponding semantic embedding, $c(y_i^s)$. We use a similarity based cross-entropy loss between the predicted label embeddings of the regressor and the true semantic label embedding:
+	\begin{equation}
+		L_S = - \sum_{i=1}^{N_s} log \frac{exp(<f_r(x_i^s), c(y_i^s)>)}{\sum_{y^s \in S} exp(<f_r(x_i^s), c(y^s)>)}
+	\end{equation}
+	Here, $<f_r(x_i^s), c(y_i^s)>$ refers to the \textit{similarity} between predicted label embedding, $f_r(x_i^s)$. The similarity function that we have used is a simple normalized cosine similarity. One could use some other similarity functions like the \textit{Jaccard} similarity as well.
+
+	\item \textbf{Adversarial Pair:} 
+	In inductive GZSL setup, we do not have training instances of the unseen classes which could pose a problem in our objective. We follow the approach of \citet{sabr25}, wherein we construct a \textit{conditional generator} network that can generate artificial instances from the unseen classes. 
+
+	This conditional generator takes as input a random noise vector $z$ and a class label embedding $c(y_s)$,  and outputs an instance $\tilde{x}^s$ in the latent $2048$-dimensional space. 
+
+	As we know the labels associated with each seen class training instance, we train the conditional generator using the \textit{Wasserstein} adversarial loss defined by,
+	
+	\begin{equation*}
+		L_G^s = \E[D^s(x^s, c(y^s))] - \E[D^s(\tilde{x}^s, c(y^s))]
+	\end{equation*}
+	\begin{equation}
+		- \lambda \E[( ~ \norm{\nabla_{\hat{x}^s} D^s(\hat{x}^s, c(y^s))} - 1)^2]	
+	\end{equation}
+	where, $D^s$ is the seen class conditional discriminator whose input is the seen class label embedding, $c(y^s)$, and the latent space instance, $\hat{x}^s = \alpha x^s + (1 - \alpha) \tilde{x^s}$ with $\alpha \sim U(0,1)$ and $\lambda$ is the gradient penalty coefﬁcient \citep{wgangp}. Thus, the objective of the generator-discriminator pair is to,
+	\begin{equation}
+		\min_{G^s} \max_{D^s}	L_G^s
+	\end{equation}
+\end{enumerate}
+
+Further, we want to encourage the generator network to synthesize feature vectors that are discriminative between seen classes and encode the semantic similarity between the label embeddings, which are precisely what the Classfier and Regressor do, respectively. Thus, the overall loss function for the generator-discriminator network is,
+\begin{equation}
+	\min_{G^s} \max_{D^s}	L_G^s + \beta (L_C + \gamma L_S)
+\end{equation}
+
+The generator can now be used to synthesize $2048$-dimensional feature vectors for the unseen classes. However, the generator can be overly biased towards the seen classes due to the training set that is presented to it, which is a stumbling block. This bias is mitigated using the principle of early stopping during training the generator. 
 
 \section{Experiments and Results}
 \label{experiments}
