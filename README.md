@@ -13,3 +13,4 @@ Compatible with Python 3.x, PyTorch 1.5.
 
 The default dataset used is **CUB**.
 
+Here are all the [pretrained models](https://drive.google.com/drive/folders/1D-IvKQlr7EJmk8nK0FfuBsyYTwzguwon?usp=sharing).
