@@ -8,7 +8,7 @@ Compatible with Python 3.x, PyTorch 1.5.
 
 ## Training the model
 1. Download datasets for zero shot learning from http://datasets.d2.mpi-inf.mpg.de/xian/xlsa17.zip.
-2. Place the datasets in some folder and change the `data_root` and `model_path` accordingly.
+2. Place the datasets in some folder and change the `data_root` string accordingly.
 3. If the `pretrained` flag is set to *True*, then the trained models will be loaded from the path specified by `model_path`.
 
 The default dataset used is **CUB**.
